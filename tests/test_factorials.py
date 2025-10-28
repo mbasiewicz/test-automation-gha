@@ -17,7 +17,7 @@ def test_negative_numbers():
 def test_zero():
     """sprawdza poprawnosc funkcji 0 jako argument"""
     result = list(factorials(0))
-    assert result == []
+    assert result == [2, 5]
 
 
 def test_float_numbers():
