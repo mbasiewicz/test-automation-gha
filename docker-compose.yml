@@ -1,0 +1,24 @@
+services:
+  formatter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: black --check --verbose ./
+
+  linter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: flake8 ./ --append-config=./.flake8 --verbose
+
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: pytest tests/ -v
+
+  pylint:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: pylint main.py tests/

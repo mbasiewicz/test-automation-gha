@@ -1,0 +1,62 @@
+name: Docker CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  format:
+    name: Check format (Docker)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: docker build -t test-automation .
+
+      - name: Run formatter
+        run: docker run --rm test-automation black --check --verbose ./
+
+  lint:
+    name: Run linter (Docker)
+    needs: [format]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: docker build -t test-automation .
+
+      - name: Run flake8
+        run: docker run --rm test-automation flake8 ./ --append-config=./.flake8 --verbose
+
+  test:
+    name: Run tests (Docker)
+    needs: [format, lint]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: docker build -t test-automation .
+
+      - name: Run tests
+        run: docker run --rm test-automation pytest tests/ -v
+
+  pylint-check:
+    name: Run pylint (Docker)
+    needs: [format, lint]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: docker build -t test-automation .
+
+      - name: Run pylint
+        run: docker run --rm test-automation pylint main.py tests/
